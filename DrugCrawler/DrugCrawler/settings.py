@@ -18,6 +18,9 @@ NEWSPIDER_MODULE = 'DrugCrawler.spiders'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'DrugCrawler (+http://www.yourdomain.com)'
 
+FEED_URI = 'data/%(name)s/%(time)s.json'
+FEED_FORMAT = 'json'
+
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
 

@@ -2,7 +2,7 @@
 import scrapy
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
-from DrugCrawler.item import DrugcrawlerItem
+from DrugCrawler.DrugCrawler.items import DrugcrawlerItem
 
 
 class ElectronicsSpider(CrawlSpider):
