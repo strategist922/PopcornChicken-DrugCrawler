@@ -1,35 +1,29 @@
-# -*- coding: utf-8 -*-
 import scrapy
-from scrapy.spiders import CrawlSpider, Rule
-from scrapy.linkextractors import LinkExtractor
-from DrugCrawler.items import DrugcrawlerItem
 
 
-class ElectronicsSpider(CrawlSpider):
-    name = "Druggy1"
-    allowed_domains = ["www.olx.com.pk"]
-    start_urls = [
-        'https://www.olx.com.pk/computers-accessories/',
-        'https://www.olx.com.pk/tv-video-audio/',
-        'https://www.olx.com.pk/games-entertainment/'
-    ]
+class Druggy1(scrapy.Spider):
+    name = 'Druggy1'
+    start_urls = ['http://brickset.com/sets/year-2016']
 
-    rules = (
-        Rule(LinkExtractor(allow=(), restrict_css=('.pageNextPrev',)),
-             callback="parse_item",
-             follow=False),)
+    def parse(self, response):
+        SET_SELECTOR = '.set'
+        for brickset in response.css(SET_SELECTOR):
 
-    def parse_item(self, response):
-        item_links = response.css('.large > .detailsLink::attr(href)').extract()
-        for a in item_links:
-            yield scrapy.Request(a, callback=self.parse_detail_page)
+            TITLE_SELECTOR = 'h1 a ::text'
+            PIECES_SELECTOR = './/dl[dt/text() = "Pieces"]/dd/a/text()'
+            MINIFIGS_SELECTOR = './/dl[dt/text() = "Minifigs"]/dd[2]/a/text()'
+            IMAGE_SELECTOR = 'img ::attr(src)'
+            yield {
+                'title': brickset.css(TITLE_SELECTOR).extract_first(),
+                'pieces': brickset.xpath(PIECES_SELECTOR).extract_first(),
+                'minifigs': brickset.xpath(MINIFIGS_SELECTOR).extract_first(),
+                'image': brickset.css(IMAGE_SELECTOR).extract_first(),
+            }
 
-    def parse_detail_page(self, response):
-        title = response.css('h1::text').extract()[0].strip()
-        price = response.css('.pricelabel > strong::text').extract()[0]
-
-        item = DrugcrawlerItem()
-        item['title'] = title
-        item['price'] = price
-        item['url'] = response.url
-        yield item
+        NEXT_PAGE_SELECTOR = '.next a ::attr(href)'
+        next_page = response.css(NEXT_PAGE_SELECTOR).extract_first()
+        if next_page:
+            yield scrapy.Request(
+                response.urljoin(next_page),
+                callback=self.parse
+            )
