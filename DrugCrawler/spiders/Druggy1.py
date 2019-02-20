@@ -1,23 +1,20 @@
 import scrapy
 
+#Purposed for NORD rarediseases.org scraping
 
 class Druggy1(scrapy.Spider):
     name = 'Druggy1'
-    start_urls = ['http://brickset.com/sets/year-2016']
+    start_urls = ['https://rarediseases.org/for-patients-and-families/information-resources/rare-disease-information/']
 
     def parse(self, response):
-        SET_SELECTOR = '.set'
+        SET_SELECTOR = 'body.rare-diseases-template-default'
         for brickset in response.css(SET_SELECTOR):
 
-            TITLE_SELECTOR = 'h1 a ::text'
-            PIECES_SELECTOR = './/dl[dt/text() = "Pieces"]/dd/a/text()'
-            MINIFIGS_SELECTOR = './/dl[dt/text() = "Minifigs"]/dd[2]/a/text()'
-            IMAGE_SELECTOR = 'img ::attr(src)'
+            TITLE_SELECTOR = 'h3 a ::text'
+           # PIECES_SELECTOR = './/dl[dt/text() = "Pieces"]/dd/a/text()'
             yield {
                 'title': brickset.css(TITLE_SELECTOR).extract_first(),
-                'pieces': brickset.xpath(PIECES_SELECTOR).extract_first(),
-                'minifigs': brickset.xpath(MINIFIGS_SELECTOR).extract_first(),
-                'image': brickset.css(IMAGE_SELECTOR).extract_first(),
+               # 'pieces': brickset.xpath(PIECES_SELECTOR).extract_first(),
             }
 
         NEXT_PAGE_SELECTOR = '.next a ::attr(href)'
