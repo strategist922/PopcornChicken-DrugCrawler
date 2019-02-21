@@ -6,6 +6,7 @@ class Druggy1(scrapy.Spider):
     name = 'Druggy1'
     start_urls = ['https://rarediseases.org/?s=A&post_type=rare-diseases']
 
+    # allowed_domains = ['rarediseases.org']
     def parse(self, response):
         SET_SELECTOR = 'h3.rdr-one-title'
         for brickset in response.css(SET_SELECTOR):
@@ -17,10 +18,9 @@ class Druggy1(scrapy.Spider):
                # 'pieces': brickset.xpath(PIECES_SELECTOR).extract_first(),
             }
 
-        NEXT_PAGE_SELECTOR = '.next a ::attr(href)'
-        next_page = response.css(NEXT_PAGE_SELECTOR).extract_first()
-        if next_page:
-            yield scrapy.Request(
-                response.urljoin(next_page),
-                callback=self.parse
-            )
+        NEXT_PAGE_SELECTOR = 'div.search-alphabet a::attr(href)'
+        next_page = response.css(NEXT_PAGE_SELECTOR).get()[2-26]
+        if next_page is not None:
+            next_page = response.urljoin(next_page)
+            yield scrapy.Request(next_page, callback=self.parse)
+
