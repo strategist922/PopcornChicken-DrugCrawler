@@ -3,8 +3,8 @@ from DrugCrawler.items import DrugcrawlerItem
 #Purposed for GARD rarediseases.org scraping
 
 class Druggy1(scrapy.Spider):
-    name = 'Druggy2'
-    start_urls = ['https://rarediseases.info.nih.gov/diseases/browse-by-first-letter/Z']
+    name = 'Druggy4'
+    start_urls = ['https://www.orpha.net/consor4.01/www/cgi-bin/Disease_Search_List.php?lng=EN&TAG=A']
 
     # custom_settings = {
     #   'DEPTH_LIMIT': 1
